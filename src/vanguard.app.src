@@ -1,0 +1,21 @@
+{application, vanguard,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { vanguard_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    lager,
+    dns,
+    jsx,
+    erldns,
+    eleveldb
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.
