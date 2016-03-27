@@ -9,12 +9,16 @@
 handle(Req, _Args) ->
     handle(Req#req.method, elli_request:path(Req), Req).
 
+handle('GET', [<<"service">>, ServiceId], _Req) ->
+    {_, Node, Port} = cadre:find(ServiceId),
+    {ok, [], jsx:encode(#{<<"node">> => Node,
+                          <<"port">> => Port})};
 handle('PUT',[<<"node">>, <<"register">>], Req) ->
     #{<<"node">> := Node,
       <<"port">> := Port,
       <<"service">> := #{<<"id">> := ServiceId}} = jsx:decode(elli_request:body(Req), [return_maps]),
     ok = cadre:register(ServiceId, Node, Port),
-    {ok, [], <<"">>};
+    {204, [], <<>>};
 
 handle(_, _, _Req) ->
     {404, [], <<"Not Found">>}.

@@ -1,5 +1,10 @@
 %% -*- erlang -*-
 
+{mapping, "http_port", "vanguard.http_port", [
+  {default, 8080},
+  {datatype, integer}
+]}.
+
 {mapping, "domain", "vanguard.domain", [
   {default, "vanguard"},
   {datatype, string}

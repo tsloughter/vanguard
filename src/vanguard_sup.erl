@@ -29,8 +29,9 @@ start_link() ->
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
     DataRoot = application:get_env(riak_ensemble, data_root, "./data"),
+    ListenPort = application:get_env(vanguard, http_port, 8080),
 
-    HttpInterface = {http_interface, {elli, start_link, [[{callback, vanguard_http_callback}, {port, 8080}]]},
+    HttpInterface = {http_interface, {elli, start_link, [[{callback, vanguard_http_callback}, {port, ListenPort}]]},
                      permanent, 20000, worker, [elli]},
     Ensemble = {riak_ensemble_sup, {riak_ensemble_sup, start_link, [filename:join(DataRoot, atom_to_list(node()))]},
                 permanent, 20000, supervisor, [riak_ensemble_sup]},

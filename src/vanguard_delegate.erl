@@ -12,7 +12,7 @@ get_records_by_name(Qname) ->
         {_, Target, Port} ->
             [#dns_rr{name = Qname,
                     type = ?DNS_TYPE_SRV,
-                    ttl  = 3600,
+                    ttl  = 0,
                     data = #dns_rrdata_srv{priority = 1,
                                            weight   = 1,
                                            port     = Port,
