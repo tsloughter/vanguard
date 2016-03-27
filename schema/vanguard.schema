@@ -1,0 +1,108 @@
+%% -*- erlang -*-
+
+{mapping, "domain", "vanguard.domain", [
+  {default, "vanguard"},
+  {datatype, string}
+]}.
+
+{mapping, "cluster", "vanguard.cluster", [
+  {default, "c1"},
+  {datatype, string}
+]}.
+
+{mapping, "zone_delegates", "erldns.zone_delegates", [
+  {default, vanguard_delegate},
+  {datatype, {enum, [vanguard_delegate]}}
+]}.
+
+{translation,
+"erldns.zone_delegates",
+fun(Conf) ->
+    Domain = list_to_binary(cuttlefish:conf_get("domain", Conf)),
+    Cluster = list_to_binary(cuttlefish:conf_get("cluster", Conf)),
+    Zone = <<"service.", Cluster/binary, ".", Domain/binary>>,
+    [{_, ZD}] = cuttlefish_variable:filter_by_prefix("zone_delegates", Conf),
+    [{Zone, ZD}]
+end}.
+
+{mapping, "storage_type", "erldns.storage.type", [
+  {default, erldns_storage_json},
+  {datatype, {enum, [erldns_storage_cadre, erldns_storage_json]}}
+]}.
+
+{mapping, "storage_dir", "erldns.storage.dir", [
+  {default, "db"},
+  {datatype, string},
+  {include_default, "inet_localhost_1"}
+]}.
+
+{mapping, "server.$name.address", "erldns.servers", [
+  {default, "127.0.0.1"},
+  {datatype, string},
+  {include_default, "inet_localhost_1"}
+]}.
+
+{mapping, "server.$name.port", "erldns.servers", [
+  {default, 8053},
+  {datatype, integer},
+  {include_default, "inet_localhost_1"}
+]}.
+
+{mapping, "server.$name.family", "erldns.servers", [
+  {default, inet},
+  {datatype, {enum, [inet, inet6]}},
+  {include_default, "inet_localhost_1"}
+]}.
+
+{mapping, "server.$name.processes", "erldns.servers", [
+  {default, 2},
+  {datatype, integer},
+  {include_default, "inet_localhost_1"}
+]}.
+
+{translation,
+ "erldns.servers",
+  fun(Conf) ->
+      Servers = cuttlefish_variable:filter_by_prefix("server", Conf),
+      Dict = lists:foldl(fun({["server", Name, Key], Value}, DictAcc) ->
+                             dict:append_list(list_to_atom(Name), [{list_to_atom(Key), Value}], DictAcc);
+                            (_, DictAcc) ->
+                             DictAcc
+                         end, dict:new(), Servers),
+      dict:fold(fun(Name, Values, Acc) ->
+                    [[{name, Name} | Values] | Acc]
+                end, [], Dict)
+  end}.
+
+{mapping, "dns_pool.$name.module", "erldns.pools", [
+  {default, erldns_worker},
+  {datatype, atom},
+  {include_default, "tcp_worker_pool"}
+]}.
+
+{mapping, "dns_pool.$name.size", "erldns.pools", [
+  {default, 10},
+  {datatype, integer},
+  {include_default, "tcp_worker_pool"}
+]}.
+
+{mapping, "dns_pool.$name.max_overflow", "erldns.pools", [
+  {default, 20},
+  {datatype, integer},
+  {include_default, "tcp_worker_pool"}
+]}.
+
+{translation,
+ "erldns.pools",
+  fun(Conf) ->
+      Servers = cuttlefish_variable:filter_by_prefix("dns_pool", Conf),
+      Dict = lists:foldl(fun({["dns_pool", Name, Key], Value}, DictAcc) ->
+                             dict:append_list(list_to_atom(Name), [{list_to_atom(Key), Value}], DictAcc);
+                            (_, DictAcc) ->
+                             DictAcc
+                         end, dict:new(), Servers),
+      dict:fold(fun(Name, Values, Acc) ->
+                    {value, {module, Module}, Values1} = lists:keytake(module, 1, Values),
+                    [{Name, Module, Values1} | Acc]
+                end, [], Dict)
+  end}.

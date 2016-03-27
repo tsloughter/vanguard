@@ -1,5 +1,5 @@
 {application, vanguard,
- [{description, "An OTP application"},
+ [{description, ""},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, { vanguard_app, []}},
@@ -10,7 +10,8 @@
     dns,
     jsx,
     erldns,
-    eleveldb
+    eleveldb,
+    elli
    ]},
   {env,[]},
   {modules, []},

@@ -10,7 +10,7 @@
          terminate/2, code_change/3]).
 
 -define(SERVER, ?MODULE).
--define(ENSEMBLES, [zones]).
+-define(ENSEMBLES, [services]).
 
 -record(state, {nodes=[]}).
 
@@ -24,7 +24,7 @@ create() ->
     gen_server:call(?SERVER, create, 20000).
 
 init([]) ->
-    {ok, #state{nodes=[node()]}}.
+    {ok, #state{nodes=[node()]}, 0}.
 
 handle_call(add_nodes, _From, State) ->
     join_cluster(nodes()),
@@ -41,6 +41,11 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+handle_info(timeout, State) ->
+    riak_ensemble_manager:enable(),
+    wait_stable(),
+    create_ensembles(?ENSEMBLES),
+    {noreply, State};
 handle_info(_Info, State) ->
     {noreply, State}.
 
