@@ -1,7 +1,7 @@
 vanguard
 =====
 
-Consul clone.
+Consul "clone". It is not and will not be 1:1 for features. The main purpose of creating this was to have a project for writing advanced Erlang tutorials around.
 
 ### Build and Run
 
