@@ -1,7 +1,7 @@
 %% -*- erlang -*-
 
 {mapping, "http_port", "vanguard.http_port", [
-  {default, 8080},
+  {default, {{http_port}}},
   {datatype, integer}
 ]}.
 
@@ -48,7 +48,7 @@ end}.
 ]}.
 
 {mapping, "server.$name.port", "erldns.servers", [
-  {default, 8053},
+  {default, {{dns_port}}},
   {datatype, integer},
   {include_default, "inet_localhost_1"}
 ]}.
