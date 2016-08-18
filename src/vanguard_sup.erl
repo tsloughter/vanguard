@@ -38,7 +38,7 @@ init([]) ->
     Cluster = {vanguard_cluster, {vanguard_cluster, start_link, []},
                 permanent, 20000, worker, [vanguard_cluster]},
 
-    {ok, {{one_for_all, 0, 1}, [HttpInterface, Ensemble, Cluster]}}.
+    {ok, {{one_for_one, 0, 1}, [HttpInterface, Ensemble, Cluster]}}.
 
 %%====================================================================
 %% Internal functions
